@@ -3,112 +3,129 @@
 ## Iteration 2
 
 ## Project Description
-ticket registering system
+Need to implement login features additionally
 
 ## User Feedback Incorporated
 Initial iteration - no previous feedback
 
 ## Refined Requirements
-# Technical Specification: Simple-System-Ticket (Iteration 2 - MVP)
+# Technical Specification: Simple-System-Ticket (Iteration 2)
 
 ## 1. Project Overview
-The **simple-system-ticket** is transitioning from a static boilerplate to a functional Minimum Viable Product (MVP). The goal of Iteration 2 is to implement a robust CRUD (Create, Read, Update, Delete) workflow for tickets, enabling internal teams to move tasks through a standardized lifecycle.
+The **Simple-System-Ticket** is a lightweight application designed to streamline the process of registering, tracking, and managing support tickets. Iteration 2 focuses on transitioning from a public-access tool to a secure, authenticated platform.
+
+## 2. Iteration 2 Goals
+- **Primary:** Implement a secure Login/Authentication system.
+- **Secondary:** Establish a persistent user session and associate tickets with specific user accounts.
+- **Refinement:** Improve UI consistency using defined design tokens.
 
 ---
 
-## 2. Refined Functional Requirements
+## 3. Functional Requirements
 
-### 2.1 Ticket Lifecycle Management
-*   **Ticket Creation:** 
-    *   Fields required: `Title` (max 100 chars), `Description` (Markdown supported), `Priority` (Low, Medium, High).
-    *   Auto-generated fields: `Ticket ID` (e.g., TIC-001), `Created Date`, `Status` (defaults to "Open").
-*   **Ticket Viewing:**
-    *   **Dashboard View:** A list/table view showing all active tickets.
-    *   **Detail View:** A dedicated page or modal showing full description and history.
-*   **Status Transitions:**
-    *   Users can update status through the following flow: `Open` -> `In Progress` -> `Resolved` -> `Closed`.
-    *   Tickets can be moved back to `In Progress` from `Resolved` if the issue persists.
+### 3.1 Authentication (New)
+- **User Login:** Users must provide a username/email and password to access the system.
+- **Session Management:** Persist user login state across browser refreshes (LocalStorage or Cookies).
+- **Logout:** Users must be able to securely terminate their session.
+- **Protected Routes:** Prevent unauthorized access to the Ticket Dashboard and Creation forms.
 
-### 2.2 Search & Filtering
-*   **Filtering:** Users must be able to filter the list view by `Status` and `Priority`.
-*   **Search:** A simple text-based search filtering by `Title` or `Ticket ID`.
+### 3.2 Ticket Management (Refined)
+- **Ticket Creation:** Authenticated users can create tickets with a Title, Description, and Priority.
+- **User Attribution:** Each ticket must be automatically linked to the ID of the creator.
+- **Ticket Status:** Default status is "Open". Updates can move tickets to "In Progress" or "Resolved".
 
 ---
 
-## 3. UI/UX Design Tokens
-To ensure consistency across the application, the following design tokens are established for Iteration 2.
+## 4. UI/UX Design Tokens
 
-### 3.1 Color Palette
+To ensure consistency, the following design tokens will be used:
+
+### 4.1 Color Palette
 | Token | Hex Code | Usage |
 | :--- | :--- | :--- |
-| `--color-primary` | `#2563EB` | Primary buttons, active states (Blue) |
-| `--color-bg-main` | `#F9FAFB` | Application background (Light Grey) |
-| `--color-text-main` | `#111827` | Primary headings and body text |
-| `--color-status-open` | `#6B7280` | Status badge: Open (Grey) |
-| `--color-status-progress` | `#3B82F6` | Status badge: In Progress (Blue) |
-| `--color-status-resolved` | `#10B981` | Status badge: Resolved (Green) |
-| `--color-priority-high` | `#EF4444` | Priority indicator: High (Red) |
+| `--primary` | `#2563EB` | Buttons, Active links, Highlights |
+| `--primary-hover` | `#1D4ED8` | Button hover states |
+| `--bg-main` | `#F9FAFB` | Page background |
+| `--bg-card` | `#FFFFFF` | Ticket cards and form containers |
+| `--text-main` | `#111827` | Primary headings and body |
+| `--text-muted` | `#6B7280` | Labels and secondary info |
+| `--status-open` | `#10B981` | Success/Open badges |
+| `--status-error` | `#EF4444` | Errors/High priority badges |
 
-### 3.2 Typography & Spacing
-*   **Font Stack:** `Inter, system-ui, sans-serif`
-*   **Scale:** Base 16px. H1: 1.5rem, H2: 1.25rem, Label: 0.875rem.
-*   **Spacing Unit:** `4px` base (e.g., Padding: `16px` / `1rem`).
-*   **Border Radius:** `6px` for buttons and cards.
-
----
-
-## 4. Component Breakdown
-
-### 4.1 Layout Components
-*   **`Navigation`**: Top bar containing the logo, "Create Ticket" button, and user profile stub.
-*   **`Sidebar`**: Navigation links (Dashboard, My Tickets, Settings).
-
-### 4.2 Data Components
-*   **`TicketTable`**: Displays a list of tickets with sortable columns.
-*   **`TicketCard`**: Mobile-responsive view of a ticket (used in Kanban or List views).
-*   **`StatusBadge`**: A pill-shaped component that changes color based on the `status` prop.
-*   **`PriorityIcon`**: A visual indicator (arrow or dot) representing the severity.
-
-### 4.3 Interactive Components
-*   **`TicketModal`**: A pop-up form for creating or editing tickets.
-*   **`SearchBar`**: Input field with a debounce function for real-time filtering.
-*   **`StatusDropdown`**: A select menu located within the Ticket Detail view to trigger state changes.
+### 4.2 Typography & Spacing
+- **Font Stack:** Inter, system-ui, sans-serif.
+- **Base Size:** `16px`.
+- **Spacing Scale:** 4px (0.25rem) increments (e.g., `p-4` = 16px).
+- **Border Radius:** `0.375rem` (6px) for cards and buttons.
 
 ---
 
-## 5. Feature Prioritization (MoSCoW)
+## 5. Component Breakdown
 
-| Priority | Feature | Description |
+### 5.1 Layout Components
+- **`AuthProvider`**: A Context Provider to wrap the application and manage global auth state.
+- **`ProtectedRoute`**: A wrapper component that redirects unauthenticated users to `/login`.
+- **`Navbar`**: Displays the logo, current user's name, and a "Logout" button.
+
+### 5.2 Feature: Authentication
+- **`LoginForm`**: Controlled form with validation for email format and password length.
+- **`AuthCard`**: Centered UI container for the login experience.
+
+### 5.3 Feature: Ticketing
+- **`TicketList`**: A grid or list view of tickets filtered by the logged-in user.
+- **`TicketCard`**: Summarized view of a single ticket (Title, ID, Status, Date).
+- **`TicketForm`**: Modal or dedicated page to input ticket details.
+- **`PriorityBadge`**: Visual indicator (Color-coded) for ticket urgency.
+
+---
+
+## 6. Technical Stack & Data Schema
+
+### 6.1 Stack
+- **Frontend:** React (Vite), TypeScript.
+- **State Management:** React Context API (for Auth), LocalState (for UI).
+- **Styling:** Tailwind CSS (preferred) or CSS Modules.
+
+### 6.2 Data Model (JSON Shape)
+```typescript
+interface User {
+  id: string;
+  username: string;
+  email: string;
+  token: string; // Mock JWT for this iteration
+}
+
+interface Ticket {
+  id: string;
+  creatorId: string;
+  title: string;
+  description: string;
+  status: 'Open' | 'In Progress' | 'Resolved';
+  priority: 'Low' | 'Medium' | 'High';
+  createdAt: string;
+}
+```
+
+---
+
+## 7. Acceptance Criteria (Iteration 2)
+
+| ID | Requirement | Acceptance Criteria |
 | :--- | :--- | :--- |
-| **Must Have** | Ticket CRUD | Create, Read, Update status, Delete. |
-| **Must Have** | List View | Centralized dashboard for all tickets. |
-| **Should Have** | Filtering | Filter by status and priority level. |
-| **Should Have** | Form Validation | Prevent empty titles or descriptions. |
-| **Could Have** | Assignee | Ability to assign a ticket to a specific user. |
-| **Won't Have** | File Uploads | Attachments are deferred to Iteration 3. |
+| **AC-1** | User Login | Entering valid credentials redirects the user to the Dashboard. |
+| **AC-2** | Access Control | Navigating directly to `/dashboard` without logging in redirects to `/login`. |
+| **AC-3** | Ticket Attribution | When a ticket is saved, it contains the `userId` of the currently logged-in user. |
+| **AC-4** | Persistence | Refreshing the browser while logged in does not force a re-login. |
+| **AC-5** | UI Polish | Buttons use `--primary` and inputs have a consistent focus ring. |
 
 ---
 
-## 6. Acceptance Criteria (AC)
-
-### AC 1: Ticket Creation
-*   **Given** I am on the Dashboard, **When** I click "New Ticket" and fill in the title and description, **Then** the ticket should appear at the top of the list with a status of "Open".
-
-### AC 2: Status Transition
-*   **Given** an existing ticket with status "Open", **When** I change the status to "In Progress" in the detail view, **Then** the UI should immediately reflect the new status color and persist the change on refresh.
-
-### AC 3: Responsive List
-*   **Given** I am viewing the system on a mobile device, **Then** the ticket list should transform from a table into a stacked card layout to ensure readability.
-
-### AC 4: Data Integrity
-*   **Given** a user attempts to save a ticket without a title, **Then** the system must prevent submission and display a "Title is required" error message.
-
----
-
-## 7. Technical Implementation Notes
-*   **State Management:** Use a centralized store (e.g., Redux, Vuex, or React Context) to manage ticket data across the Dashboard and Detail views.
-*   **Persistence:** For Iteration 2, data should be persisted in `localStorage` or a mock API (JSON Server) to simulate a backend.
-*   **Routing:** Implement basic routing (e.g., `/` for Dashboard, `/ticket/:id` for Detail).
+## 8. Prioritized Task List
+1. **Setup Auth Context:** Define `login`, `logout`, and `user` state.
+2. **Implement Login UI:** Create the `LoginForm` and basic validation.
+3. **Route Guarding:** Update `App.tsx` to handle public vs. private routes.
+4. **Update Ticket Logic:** Modify the ticket creation service to include `userId`.
+5. **Styling Overlay:** Apply design tokens across all existing components.
 
 ## Acceptance Criteria
 - All features must be fully implemented (no placeholders)
@@ -117,4 +134,4 @@ To ensure consistency across the application, the following design tokens are es
 - Code must pass TypeScript compilation
 
 ---
-*Generated by ASLA Product Agent - Iteration 2 - 2025-12-28T15:54:00.073Z*
+*Generated by ASLA Product Agent - Iteration 2 - 2025-12-28T17:07:12.994Z*
